@@ -7,6 +7,7 @@
     ];
 
   hardware.graphics.enable = true;
+  hardware.bluetooth.enable = true;
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -26,6 +27,7 @@
 
   programs.firefox.enable = true;
   programs.hyprland.enable = true;
+  programs.ssh.startAgent = true;
 
   environment.systemPackages = with pkgs; [
     inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
@@ -36,20 +38,26 @@
     nushell
     starship
     git
+    chezmoi
   ];
 
   services.openssh.enable = true;
+  services.tuned.enable = true;
+  services.upower.enable = true;
   services.greetd = {
     enable = true;
     settings.default_session = {
-      command = "hyprland";
+      command = "start-hyprland";
       user = "joshua";
     };
   };
 
-  services.xserver.videoDrivers = [ "modesetting" ];
-
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
+  boot.initrd.kernelModules = [ "hyperv_drm" ];
+  boot.kernelModules = [ "hyperv_drm" ];
+  
+  services.xserver.videoDrivers = [ "modesetting" ];
 
   system.stateVersion = "25.11";
 }
