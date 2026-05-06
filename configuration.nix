@@ -39,6 +39,7 @@
     starship
     git
     chezmoi
+    kitty
   ];
 
   services.openssh.enable = true;
