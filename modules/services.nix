@@ -1,8 +1,5 @@
-{ den, inputs, lib }:
-{ host, ... }@ctx:
 {
-  nixos = { config, pkgs, ... }: {
-    programs.firefox.enable = true;
+  den.aspects.services.nixos = {
     programs.ssh.startAgent = true;
 
     services.openssh.enable = true;
