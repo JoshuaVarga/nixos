@@ -6,6 +6,7 @@
       den.aspects.services
       den.aspects.shell
       den.aspects.dev-tools
+      den.aspects.nh
       den.aspects.nvidia
       den.aspects.steam
     ];
