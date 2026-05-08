@@ -71,7 +71,6 @@
 
           binds {
               Alt+Shift+E      { quit; }
-              Alt+Shift+R      { reload-config; }
               Alt+Shift+Q      { close-window; }
 
               Alt+Space        { spawn "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
