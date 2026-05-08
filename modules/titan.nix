@@ -3,6 +3,7 @@
   den.aspects.titan = {
     includes = [
       den.aspects.desktop
+      den.aspects.niri
       den.aspects.services
       den.aspects.shell
       den.aspects.dev-tools
