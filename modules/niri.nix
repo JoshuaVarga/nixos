@@ -41,8 +41,9 @@
           }
 
           layout {
-              gaps 8
+              gaps 12
               center-focused-column "never"
+              background-color "#1f2335"
               preset-column-widths {
                   proportion 0.33333
                   proportion 0.5
@@ -51,12 +52,31 @@
               default-column-width { proportion 0.5; }
               focus-ring {
                   width 2
-                  active-color "#7fc8ff"
-                  inactive-color "#505050"
+                  active-gradient from="#7aa2f7" to="#7dcfff" angle=45
+                  inactive-color "#414868"
               }
               border {
                   off
               }
+              shadow {
+                  on
+                  softness 24
+                  spread 2
+                  offset x=0 y=4
+                  draw-behind-window false
+                  color "#1a1b2680"
+                  inactive-color "#1a1b2640"
+              }
+              insert-hint {
+                  color "#bb9af7aa"
+              }
+          }
+
+          blur {
+              passes 3
+              offset 3.0
+              noise 0.015
+              saturation 1.2
           }
 
           prefer-no-csd
@@ -65,6 +85,65 @@
 
           hotkey-overlay {
               skip-at-startup
+          }
+
+          window-rule {
+              geometry-corner-radius 6
+              clip-to-geometry true
+
+              background-effect {
+                  blur true
+              }
+          }
+
+          layer-rule {
+              match namespace="^launcher$"
+              background-effect {
+                  blur true
+              }
+          }
+
+          layer-rule {
+              match namespace="^notifications$"
+              background-effect {
+                  blur true
+              }
+          }
+
+          animations {
+              window-open {
+                  duration-ms 250
+                  curve "cubic-bezier" 0.34 1.56 0.64 1
+              }
+
+              window-close {
+                  duration-ms 130
+                  curve "ease-out-quad"
+              }
+
+              workspace-switch {
+                  spring damping-ratio=1.0 stiffness=1200 epsilon=0.0001
+              }
+
+              horizontal-view-movement {
+                  spring damping-ratio=0.88 stiffness=1000 epsilon=0.0001
+              }
+
+              window-movement {
+                  spring damping-ratio=0.85 stiffness=1000 epsilon=0.0001
+              }
+
+              window-resize {
+                  spring damping-ratio=1.0 stiffness=1100 epsilon=0.0001
+              }
+
+              overview-open-close {
+                  spring damping-ratio=0.9 stiffness=900 epsilon=0.0001
+              }
+
+              config-notification-open-close {
+                  spring damping-ratio=0.7 stiffness=1100 epsilon=0.001
+              }
           }
 
           spawn-at-startup "noctalia-shell"
