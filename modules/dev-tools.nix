@@ -9,6 +9,13 @@
         chezmoi
         wget
         claude-code
+        gcc
+        lazygit
+        fzf
+        ripgrep
+        fd
+        curl
+        tree-sitter
       ];
     };
 }
