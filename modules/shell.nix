@@ -5,7 +5,6 @@
       environment.systemPackages = with pkgs; [
         nushell
         starship
-        kitty
         wezterm
       ];
     };
