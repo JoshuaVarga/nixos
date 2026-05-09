@@ -1,4 +1,6 @@
 input {
+    mod-key "Super"
+    mod-key-nested "Alt"
     keyboard {
         xkb {
         }
@@ -24,7 +26,7 @@ layout {
         proportion 0.5
         proportion 0.66667
     }
-    default-column-width { proportion 0.5; }
+    default-column-width {}
     focus-ring {
         width 2
         active-gradient from="#7aa2f7" to="#7dcfff" angle=45
@@ -52,6 +54,12 @@ blur {
     offset 3.0
     noise 0.015
     saturation 1.2
+}
+
+gestures {
+    hot-corners {
+        off
+    }
 }
 
 prefer-no-csd
@@ -124,69 +132,71 @@ animations {
 spawn-at-startup "noctalia-shell"
 
 binds {
-    Alt+Shift+E      { quit; }
-    Alt+Shift+Q      { close-window; }
+    Mod+Shift+E      { quit; }
+    Mod+Shift+Q      { close-window; }
 
-    Alt+Space        { spawn "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
-    Alt+Return       { spawn "wezterm"; }
+    Mod+Space        { spawn "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
 
-    Alt+1            { focus-workspace 1; }
-    Alt+2            { focus-workspace 2; }
-    Alt+3            { focus-workspace 3; }
-    Alt+4            { focus-workspace 4; }
-    Alt+5            { focus-workspace 5; }
-    Alt+6            { focus-workspace 6; }
-    Alt+7            { focus-workspace 7; }
-    Alt+8            { focus-workspace 8; }
-    Alt+9            { focus-workspace 9; }
+    Mod+1            { focus-workspace 1; }
+    Mod+2            { focus-workspace 2; }
+    Mod+3            { focus-workspace 3; }
+    Mod+4            { focus-workspace 4; }
+    Mod+5            { focus-workspace 5; }
+    Mod+6            { focus-workspace 6; }
+    Mod+7            { focus-workspace 7; }
+    Mod+8            { focus-workspace 8; }
+    Mod+9            { focus-workspace 9; }
 
-    Alt+Shift+1      { move-column-to-workspace 1; }
-    Alt+Shift+2      { move-column-to-workspace 2; }
-    Alt+Shift+3      { move-column-to-workspace 3; }
-    Alt+Shift+4      { move-column-to-workspace 4; }
-    Alt+Shift+5      { move-column-to-workspace 5; }
-    Alt+Shift+6      { move-column-to-workspace 6; }
-    Alt+Shift+7      { move-column-to-workspace 7; }
-    Alt+Shift+8      { move-column-to-workspace 8; }
-    Alt+Shift+9      { move-column-to-workspace 9; }
+    Mod+Shift+1      { move-column-to-workspace 1; }
+    Mod+Shift+2      { move-column-to-workspace 2; }
+    Mod+Shift+3      { move-column-to-workspace 3; }
+    Mod+Shift+4      { move-column-to-workspace 4; }
+    Mod+Shift+5      { move-column-to-workspace 5; }
+    Mod+Shift+6      { move-column-to-workspace 6; }
+    Mod+Shift+7      { move-column-to-workspace 7; }
+    Mod+Shift+8      { move-column-to-workspace 8; }
+    Mod+Shift+9      { move-column-to-workspace 9; }
 
-    Alt+H            { focus-column-left; }
-    Alt+L            { focus-column-right; }
-    Alt+J            { focus-window-down; }
-    Alt+K            { focus-window-up; }
-    Alt+Left         { focus-column-left; }
-    Alt+Right        { focus-column-right; }
-    Alt+Down         { focus-window-down; }
-    Alt+Up           { focus-window-up; }
+    Mod+H            { focus-column-left; }
+    Mod+L            { focus-column-right; }
+    Mod+J            { focus-window-down; }
+    Mod+K            { focus-window-up; }
+    Mod+Left         { focus-column-left; }
+    Mod+Right        { focus-column-right; }
+    Mod+Down         { focus-window-down; }
+    Mod+Up           { focus-window-up; }
 
-    Alt+Shift+H      { move-column-left; }
-    Alt+Shift+L      { move-column-right; }
-    Alt+Shift+J      { move-window-down; }
-    Alt+Shift+K      { move-window-up; }
-    Alt+Shift+Left   { move-column-left; }
-    Alt+Shift+Right  { move-column-right; }
-    Alt+Shift+Down   { move-window-down; }
-    Alt+Shift+Up     { move-window-up; }
+    Mod+Shift+H      { move-column-left; }
+    Mod+Shift+L      { move-column-right; }
+    Mod+Shift+J      { move-window-down; }
+    Mod+Shift+K      { move-window-up; }
+    Mod+Shift+Left   { move-column-left; }
+    Mod+Shift+Right  { move-column-right; }
+    Mod+Shift+Down   { move-window-down; }
+    Mod+Shift+Up     { move-window-up; }
 
-    Alt+U            { set-column-width "-2%"; }
-    Alt+P            { set-column-width "+2%"; }
-    Alt+I            { set-window-height "-2%"; }
-    Alt+O            { set-window-height "+2%"; }
+    Mod+U            { set-column-width "-10%"; }
+    Mod+P            { set-column-width "+10%"; }
+    Mod+I            { set-window-height "-10%"; }
+    Mod+O            { set-window-height "+10%"; }
 
-    Alt+F            { fullscreen-window; }
-    Alt+Shift+Space  { toggle-window-floating; }
+    Mod+Return       { fullscreen-window; }
+    Mod+Shift+Return { set-column-width "100%"; }
+    Mod+Shift+Space  { toggle-window-floating; }
 
-    Alt+V            { toggle-column-tabbed-display; }
-    Alt+T            { toggle-window-floating; }
+    Mod+V            { toggle-column-tabbed-display; }
+    Mod+T            { toggle-window-floating; }
+    Mod+C            { center-column; }
+    Mod+Tab          { toggle-overview; }
 
-    Alt+Shift+A      { move-workspace-to-monitor-left; }
-    Alt+Shift+F      { move-workspace-to-monitor-right; }
-    Alt+Shift+D      { move-workspace-to-monitor-up; }
-    Alt+Shift+S      { move-workspace-to-monitor-down; }
+    Mod+Shift+A      { move-workspace-to-monitor-left; }
+    Mod+Shift+F      { move-workspace-to-monitor-right; }
+    Mod+Shift+S      { move-workspace-to-monitor-down; }
+    Mod+Shift+D      { move-workspace-to-monitor-up; }
 
-    Alt+S            { focus-workspace-down; }
-    Alt+A            { focus-workspace-up; }
-    Alt+D            { focus-workspace-previous; }
+    Mod+A            { focus-workspace-previous; }
+    Mod+S            { focus-workspace-down; }
+    Mod+D            { focus-workspace-up; }
 
     XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "-l" "1" "@DEFAULT_AUDIO_SINK@" "5%+"; }
     XF86AudioLowerVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%-"; }
@@ -201,5 +211,5 @@ binds {
 
     Print            { screenshot; }
     Ctrl+Print       { screenshot-screen; }
-    Alt+Print        { screenshot-window; }
+    Mod+Print        { screenshot-window; }
 }
