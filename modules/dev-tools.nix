@@ -8,7 +8,7 @@
         neovim
         chezmoi
         wget
-        pi-coding-agent
+        claude-code
         gcc
         lazygit
         fzf
