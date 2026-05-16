@@ -16,6 +16,9 @@
         fd
         curl
         tree-sitter
+        yazi
+        jq
+        zoxide
       ];
     };
 }

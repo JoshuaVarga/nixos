@@ -13,6 +13,7 @@
         pkgs.bitwarden-desktop
         pkgs.mullvad-vpn
         pkgs.vesktop
+        pkgs.wl-clipboard
       ];
     };
 }
