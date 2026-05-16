@@ -11,6 +11,7 @@
       environment.systemPackages = [
         inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
         pkgs.bitwarden-desktop
+        pkgs.mullvad-vpn
         pkgs.vesktop
       ];
     };
