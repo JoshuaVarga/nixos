@@ -4,7 +4,6 @@
     includes = [
       den.provides.define-user
       den.provides.primary-user
-      den.aspects.niri
     ];
 
     nixos =
