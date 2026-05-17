@@ -4,7 +4,6 @@
     { pkgs, ... }:
     {
       programs.firefox.enable = true;
-      programs.hyprland.enable = true;
 
       fonts.packages = [ pkgs.nerd-fonts.fira-code ];
 
