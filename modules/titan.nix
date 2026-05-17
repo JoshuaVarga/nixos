@@ -7,7 +7,6 @@
       den.aspects.niri
       den.aspects.noctalia
       den.aspects.services
-      den.aspects.shell
       den.aspects.dev-tools
       den.aspects.nh
       den.aspects.nvidia
