@@ -19,6 +19,7 @@
         yazi
         jq
         zoxide
+        fastfetch
       ];
     };
 }
