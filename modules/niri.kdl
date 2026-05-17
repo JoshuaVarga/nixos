@@ -129,8 +129,6 @@ animations {
     }
 }
 
-spawn-at-startup "noctalia-shell"
-
 binds {
     Mod+Shift+E      { quit; }
     Mod+Shift+Q      { close-window; }
