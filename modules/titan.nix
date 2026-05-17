@@ -1,11 +1,10 @@
-{ den, ... }:
+{ den, inputs, ... }:
 {
   den.aspects.titan = {
     includes = [
       den.provides.hostname
       den.aspects.desktop
       den.aspects.niri
-      den.aspects.noctalia
       den.aspects.services
       den.aspects.dev-tools
       den.aspects.nh
@@ -16,6 +15,10 @@
     provides.joshua.homeManager =
       { config, ... }:
       {
+        imports = [ inputs.noctalia.homeModules.default ];
+        programs.noctalia-shell.enable = true;
+        programs.noctalia-shell.systemd.enable = true;
+
         xdg.configFile."niri/config.kdl".source =
           config.lib.file.mkOutOfStoreSymlink "/etc/nixos/modules/niri.kdl";
         xdg.configFile."noctalia/settings.json".source =
