@@ -1,4 +1,4 @@
-{ den, ... }:
+{ den, inputs, ... }:
 {
   den.aspects.wsl = {
     includes = [
@@ -8,6 +8,10 @@
     ];
 
     nixos = {
+      imports = [ inputs.nixos-wsl.nixosModules.default ];
+      wsl.enable = true;
+      wsl.defaultUser = "joshua";
+
       time.timeZone = "Canada/Toronto";
 
       nix.settings.experimental-features = [
