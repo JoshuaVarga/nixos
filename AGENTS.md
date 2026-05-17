@@ -2,6 +2,14 @@
 
 Guidance for working in repos that use **[den](https://github.com/denful/den)** ([docs](https://den.oeiuwq.com/)) with the **dendritic pattern**.
 
+## Repo conventions
+
+- **Commits:** single-line, lowercase, imperative subject. No body, no `Co-Authored-By` trailer (`git log --oneline` shows the existing style). If a change feels too big for one short subject, split it into multiple atomic commits.
+- **Comments:** default to none. Nix code should be self-documenting. Skip section dividers, "what this does" labels, and rationale notes. Only keep a comment when it captures a hidden constraint or non-obvious invariant a future reader genuinely could not infer from the code.
+- **Flake path:** the active system flake is `/etc/nixos`, which is a symlink to the repo root. Tools that reference the flake path (`programs.nh.flake`, `mkOutOfStoreSymlink`, `nixos-rebuild --flake`) use `/etc/nixos/...` — they resolve through the symlink to the user-writable tree.
+- **External dotfile managers:** some app configs are intentionally managed outside Nix (e.g. shell/editor dotfiles owned by chezmoi for cross-OS reuse). For those tools, install via `home.packages` and avoid `programs.<tool>.enable` — its shell-rc snippets and generated config files will collide with the external manager. Use `programs.*` only for apps Nix is meant to own.
+- **Live-edit configs:** for app config files that need to be tweaked without rebuilding (e.g. `niri.kdl`, `noctalia-settings.json`), use the `mkOutOfStoreSymlink` pattern documented in [`skills/live-edit-config`](skills/live-edit-config/SKILL.md).
+
 ## The dendritic pattern (in one paragraph)
 
 `flake.nix` contains no logic — it calls `flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules)`. Every `.nix` file under `modules/` is auto-imported as a flake-parts module. There is no central `imports = [ ... ]` list to maintain: dropping a file in the tree is registration. File names and subdirectory layout are organizational only — the loader doesn't care. Configuration is organized by **concern (aspect)**, not by host.
@@ -200,6 +208,8 @@ den.aspects.laptop = {
 - `den.default.includes` runs for **every** host/user/home — be careful with parametric functions there. Use `den.lib.perHost` / `perUser` / `perHome` to scope cleanly.
 - Aspects are merged like NixOS modules; a `homeManager` block inside `den.aspects.foo` won't take effect unless the user has `"homeManager"` in their `den.schema.user.classes`.
 - The `<den/...>` and `<eg/...>` angle-bracket syntax in den examples is sugar for `den.provides.<name>` / namespace lookups; it requires `__findFile` to be in scope. Plain dotted access works the same.
+- **Flakes only see git-tracked files.** A new `modules/<foo>.nix` (or any data file referenced from one) must be `git add`-ed before `nix flake check` / `nixos-rebuild` can find it, even before committing. The failure mode is a cryptic `attribute 'foo' missing` on `den.aspects.foo`.
+- **`den.batteries.user-shell <shell>`** (also exposed as `den.provides.user-shell`) enables `programs.${shell}` at both the NixOS and home-manager class levels. That works for shells with a system-level module (bash, zsh, fish) but **breaks for HM-only shells like nushell** because there is no `programs.nushell` NixOS option. For those, set `users.users.<name>.shell = pkgs.<shell>;` directly and skip the battery. (The HM half of the battery also writes shell-config files, which conflicts with chezmoi-style external dotfile management — another reason to bypass it.)
 
 ## References
 
