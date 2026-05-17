@@ -11,6 +11,7 @@
       { pkgs, ... }:
       {
         users.users.joshua.shell = pkgs.nushell;
+        environment.shells = [ pkgs.nushell ];
       };
 
     homeManager =
