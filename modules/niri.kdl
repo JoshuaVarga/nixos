@@ -17,6 +17,11 @@ input {
     focus-follows-mouse max-scroll-amount="0%"
 }
 
+cursor {
+  xcursor-theme "XCursor-Pro-Red"
+  xcursor-size 24
+}
+
 layout {
     gaps 12
     center-focused-column "never"

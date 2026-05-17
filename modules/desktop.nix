@@ -11,6 +11,7 @@
         pkgs.mullvad-vpn
         pkgs.vesktop
         pkgs.wl-clipboard
+        pkgs.xcursor-pro
       ];
     };
 }
