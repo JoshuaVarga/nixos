@@ -45,6 +45,5 @@
     };
   };
 
-  # Dendritic pattern: flake-parts + import-tree for auto-discovery
   outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules);
 }
