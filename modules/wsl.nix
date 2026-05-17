@@ -13,11 +13,6 @@
       wsl.defaultUser = "joshua";
 
       time.timeZone = "Canada/Toronto";
-
-      nix.settings.experimental-features = [
-        "nix-command"
-        "flakes"
-      ];
     };
   };
 }

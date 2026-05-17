@@ -39,11 +39,6 @@
 
         hardware.graphics.enable = true;
         hardware.bluetooth.enable = true;
-
-        nix.settings.experimental-features = [
-          "nix-command"
-          "flakes"
-        ];
       };
   };
 }
