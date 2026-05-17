@@ -210,6 +210,9 @@ den.aspects.laptop = {
 - The `<den/...>` and `<eg/...>` angle-bracket syntax in den examples is sugar for `den.provides.<name>` / namespace lookups; it requires `__findFile` to be in scope. Plain dotted access works the same.
 - **Flakes only see git-tracked files.** A new `modules/<foo>.nix` (or any data file referenced from one) must be `git add`-ed before `nix flake check` / `nixos-rebuild` can find it, even before committing. The failure mode is a cryptic `attribute 'foo' missing` on `den.aspects.foo`.
 - **`den.batteries.user-shell <shell>`** (also exposed as `den.provides.user-shell`) enables `programs.${shell}` at both the NixOS and home-manager class levels. That works for shells with a system-level module (bash, zsh, fish) but **breaks for HM-only shells like nushell** because there is no `programs.nushell` NixOS option. For those, set `users.users.<name>.shell = pkgs.<shell>;` directly and skip the battery. (The HM half of the battery also writes shell-config files, which conflicts with chezmoi-style external dotfile management — another reason to bypass it.)
+- **Class/context mismatch silently drops content** — eval succeeds, but nothing applies. Content only takes effect when the resolving context has a forwarder for its class. The two cases we've hit:
+  - `provides.<user>.nixos.*` on a host-scoped aspect does **not** reach the host's NixOS config. Mutual-provider routes `provides.<other>` through user-context, which only forwards `homeManager → home-manager.users.X` and `user → users.users.X`. Put host-level NixOS config (services, etc.) in the aspect's own `nixos` block, not under `provides.<user>.nixos`.
+  - `homeManager.*` on an aspect included by a host (not by the user) does **not** reach the user's home-manager. Either put the aspect in the **user** aspect's `includes`, or wrap it as `provides.<user>.homeManager.*` on a host aspect.
 
 ## References
 
