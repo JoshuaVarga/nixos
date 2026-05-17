@@ -8,7 +8,7 @@
       url = "github:hercules-ci/flake-parts";
       inputs.nixpkgs-lib.follows = "nixpkgs";
     };
-    
+
     import-tree.url = "github:vic/import-tree";
 
     den.url = "github:vic/den";
@@ -22,7 +22,7 @@
       url = "github:cachix/git-hooks.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    
+
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -32,7 +32,7 @@
       url = "github:nix-community/NixOS-WSL/main";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    
+
     noctalia = {
       url = "github:noctalia-dev/noctalia-shell";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -46,7 +46,5 @@
   };
 
   # Dendritic pattern: flake-parts + import-tree for auto-discovery
-  outputs = inputs: 
-    inputs.flake-parts.lib.mkFlake { inherit inputs; } 
-    (inputs.import-tree ./modules);
+  outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules);
 }

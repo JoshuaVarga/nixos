@@ -24,7 +24,7 @@
       };
 
     nixos =
-      { pkgs, ... }:
+      { ... }:
       {
         imports = [ ../hardware-configuration.nix ];
 
