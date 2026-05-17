@@ -2,6 +2,7 @@
 {
   den.aspects.titan = {
     includes = [
+      den.provides.hostname
       den.aspects.desktop
       den.aspects.niri
       den.aspects.services
@@ -32,7 +33,6 @@
         };
         boot.loader.efi.canTouchEfiVariables = true;
 
-        networking.hostName = "titan";
         networking.networkmanager.enable = true;
 
         time.timeZone = null;

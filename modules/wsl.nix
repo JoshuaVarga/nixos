@@ -2,6 +2,7 @@
 {
   den.aspects.wsl = {
     includes = [
+      den.provides.hostname
       den.aspects.shell
       den.aspects.dev-tools
       den.aspects.nh
