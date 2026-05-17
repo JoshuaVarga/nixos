@@ -9,7 +9,13 @@
     nixos =
       { pkgs, ... }:
       {
-        users.users.joshua.packages = with pkgs; [
+        users.users.joshua.shell = pkgs.nushell;
+      };
+
+    homeManager =
+      { pkgs, ... }:
+      {
+        home.packages = with pkgs; [
           tree
         ];
       };
