@@ -35,7 +35,8 @@
         networking.hostName = "titan";
         networking.networkmanager.enable = true;
 
-        time.timeZone = "Canada/Toronto";
+        time.timeZone = null;
+        services.automatic-timezoned.enable = true;
 
         hardware.graphics.enable = true;
         hardware.bluetooth.enable = true;

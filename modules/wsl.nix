@@ -11,8 +11,6 @@
       imports = [ inputs.nixos-wsl.nixosModules.default ];
       wsl.enable = true;
       wsl.defaultUser = "joshua";
-
-      time.timeZone = "Canada/Toronto";
     };
   };
 }
