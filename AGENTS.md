@@ -8,7 +8,7 @@ Guidance for working in repos that use **[den](https://github.com/denful/den)** 
 - **Comments:** default to none. Nix code should be self-documenting. Skip section dividers, "what this does" labels, and rationale notes. Only keep a comment when it captures a hidden constraint or non-obvious invariant a future reader genuinely could not infer from the code.
 - **Flake path:** the active system flake is `/etc/nixos`, which is a symlink to the repo root. Tools that reference the flake path (`programs.nh.flake`, `mkOutOfStoreSymlink`, `nixos-rebuild --flake`) use `/etc/nixos/...` — they resolve through the symlink to the user-writable tree.
 - **External dotfile managers:** some app configs are intentionally managed outside Nix (e.g. shell/editor dotfiles owned by chezmoi for cross-OS reuse). For those tools, install via `home.packages` and avoid `programs.<tool>.enable` — its shell-rc snippets and generated config files will collide with the external manager. Use `programs.*` only for apps Nix is meant to own.
-- **Live-edit configs:** for app config files that need to be tweaked without rebuilding (e.g. `niri.kdl`, `noctalia-settings.json`), use the `mkOutOfStoreSymlink` pattern documented in [`skills/live-edit-config`](skills/live-edit-config/SKILL.md).
+- **Live-edit configs:** for app config files that need to be tweaked without rebuilding (e.g. `niri.kdl`, `noctalia-settings.json`), use the `mkOutOfStoreSymlink` pattern documented in [`.agents/skills/live-edit-config`](.agents/skills/live-edit-config/SKILL.md). Skills live at `.agents/skills/` (auto-discovered by Codex, pi, Copilot); `.claude/skills` is a symlink to the same directory so Claude Code finds them too.
 
 ## The dendritic pattern (in one paragraph)
 
