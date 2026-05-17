@@ -1,8 +1,8 @@
 {
-  den.aspects.shell.nixos =
+  den.aspects.shell.homeManager =
     { pkgs, ... }:
     {
-      environment.systemPackages = with pkgs; [
+      home.packages = with pkgs; [
         carapace
         nushell
         starship
