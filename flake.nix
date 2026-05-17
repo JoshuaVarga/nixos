@@ -10,8 +10,13 @@
     };
     
     import-tree.url = "github:vic/import-tree";
-    
+
     den.url = "github:vic/den";
+
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     
     home-manager = {
       url = "github:nix-community/home-manager";
