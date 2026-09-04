@@ -1,0 +1,83 @@
+[tool.commitizen]
+name = "cz_customize"
+version_provider = "scm"
+version_files = ["VERSION"]
+tag_format = "v$version"
+major_version_zero = true
+update_changelog_on_bump = false
+changelog_merge_prerelease = true
+
+[tool.commitizen.customize]
+schema = "<type>(<scope>)!: <subject>"
+schema_pattern = "^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\\((host|desktop|dev|ai|gaming|shell|sec|ci|docs|flake|release)\\))?!?: [a-z].{0,70}$"
+message_template = "{{change_type}}{% if scope %}({{scope}}){% endif %}{% if is_breaking %}!{% endif %}: {{subject}}"
+bump_pattern = "^(feat|fix|perf|refactor)(\\(.+\\))?!?:"
+bump_map = { "^.+!:" = "MAJOR", "^feat" = "MINOR", "^fix" = "PATCH", "^perf" = "PATCH", "^refactor" = "PATCH" }
+bump_map_major_version_zero = { "^.+!:" = "MINOR", "^feat" = "MINOR", "^fix" = "PATCH", "^perf" = "PATCH", "^refactor" = "PATCH" }
+change_type_order = [
+  "BREAKING CHANGE",
+  "Features",
+  "Bug Fixes",
+  "Performance",
+  "Refactors",
+  "Documentation",
+  "Build",
+  "CI",
+]
+
+[tool.commitizen.customize.change_type_map]
+feat = "Features"
+fix = "Bug Fixes"
+perf = "Performance"
+refactor = "Refactors"
+docs = "Documentation"
+build = "Build"
+ci = "CI"
+
+[[tool.commitizen.customize.questions]]
+type = "list"
+name = "change_type"
+message = "Type of change"
+choices = [
+  { value = "feat", name = "feat: a new module or capability" },
+  { value = "fix", name = "fix: a bug fix" },
+  { value = "refactor", name = "refactor: restructuring with no behaviour change" },
+  { value = "perf", name = "perf: a performance improvement" },
+  { value = "docs", name = "docs: documentation only" },
+  { value = "build", name = "build: flake inputs, lock file, formatter" },
+  { value = "ci", name = "ci: workflows and hooks" },
+  { value = "test", name = "test: checks only" },
+  { value = "style", name = "style: formatting only" },
+  { value = "revert", name = "revert: revert a previous commit" },
+  { value = "chore", name = "chore: housekeeping, kept out of the changelog" },
+]
+
+[[tool.commitizen.customize.questions]]
+type = "list"
+name = "scope"
+message = "Scope"
+choices = [
+  { value = "", name = "(none)" },
+  { value = "host", name = "host: titan, wsl, hardware, boot, nvidia" },
+  { value = "desktop", name = "desktop: niri, noctalia, cursor, greeter" },
+  { value = "dev", name = "dev: dev tools, dev shell, git" },
+  { value = "ai", name = "ai: ai tooling" },
+  { value = "gaming", name = "gaming: steam and games" },
+  { value = "shell", name = "shell: login shell and shell tooling" },
+  { value = "sec", name = "sec: gitleaks, vulnix, hardening" },
+  { value = "ci", name = "ci: workflows" },
+  { value = "docs", name = "docs: AGENTS.md, skills" },
+  { value = "flake", name = "flake: inputs, den, treefmt" },
+  { value = "release", name = "release: reserved for the release workflow" },
+]
+
+[[tool.commitizen.customize.questions]]
+type = "confirm"
+name = "is_breaking"
+message = "Is this a breaking change?"
+default = false
+
+[[tool.commitizen.customize.questions]]
+type = "input"
+name = "subject"
+message = "Subject, lowercase and imperative (max 70 chars)"

@@ -6,6 +6,8 @@
     { pkgs, ... }:
     {
       pre-commit.settings.hooks = {
+        commitizen.enable = true;
+
         gitleaks = {
           enable = true;
           name = "gitleaks";
