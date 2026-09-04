@@ -22,5 +22,8 @@
 
   den.schema.user.classes = lib.mkDefault [ "homeManager" ];
 
-  den.schema.host.includes = [ den.provides.hostname ];
+  den.schema.host.includes = [
+    den.provides.hostname
+    den.aspects.version
+  ];
 }
