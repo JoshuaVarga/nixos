@@ -67,7 +67,7 @@ Optional, but must come from this allowlist:
 
 | Scope | Covers |
 |---|---|
-| `host` | `titan`, `wsl`, hardware, boot/limine, `nvidia`, `oom-hardening` |
+| `host` | `titan`, `wsl`, hardware, boot/limine, `nvidia`, `memory` |
 | `desktop` | `niri`, `noctalia`, cursor theme, greeter |
 | `dev` | `dev-tools`, `dev-shell`, git |
 | `ai` | `ai.nix` and AI tooling |

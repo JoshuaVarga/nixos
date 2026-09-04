@@ -10,7 +10,7 @@
       den.aspects.nvidia
       den.aspects.gaming
       den.aspects.ai
-      den.aspects.oom-hardening
+      den.aspects.memory
     ];
 
     provides.joshua.user.extraGroups = [ "i2c" ];
