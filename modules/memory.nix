@@ -17,6 +17,10 @@
 
   den.aspects.memory =
     { host, ... }:
+    let
+      totalGiB = host.memory.totalGiB;
+      gib = n: "${toString n}G";
+    in
     {
       nixos = {
         assertions = [
@@ -28,13 +32,12 @@
 
         nix.settings = {
           max-jobs = 2;
-          cores = 8;
+          cores = totalGiB / 8;
         };
 
         systemd.services.nix-daemon.serviceConfig = {
-          MemoryHigh = "20G";
-          MemoryMax = "26G";
-          MemorySwapMax = "2G";
+          MemoryMax = gib (totalGiB * 4 / 5);
+          MemorySwapMax = gib (totalGiB / 2);
         };
 
         zramSwap = {
