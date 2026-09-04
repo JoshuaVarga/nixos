@@ -1,0 +1,80 @@
+name: release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    if: "!startsWith(github.event.head_commit.message, 'chore(release)')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - uses: cachix/install-nix-action@v30
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Check for releasable commits
+        id: guard
+        run: |
+          if nix develop --command cz bump --dry-run --yes; then
+            echo "release=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "no releasable commits since the last tag" >&2
+            echo "release=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Bump version and changelog
+        if: steps.guard.outputs.release == 'true'
+        id: bump
+        run: |
+          nix develop --command cz bump --yes --files-only
+          V="$(cat VERSION)"
+          nix develop --command cz changelog --incremental --unreleased-version "v$V"
+          echo "version=$V" >> "$GITHUB_OUTPUT"
+
+      - name: Commit and tag
+        if: steps.guard.outputs.release == 'true'
+        env:
+          V: ${{ steps.bump.outputs.version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add VERSION CHANGELOG.md
+          git commit -m "chore(release): v$V"
+          git tag "v$V"
+
+      - name: Evaluate host closures
+        if: steps.guard.outputs.release == 'true'
+        run: |
+          : > manifest.jsonl
+          for host in titan wsl; do
+            path="$(nix eval --raw ".#nixosConfigurations.$host.config.system.build.toplevel")"
+            printf '{"host":"%s","toplevel":"%s"}\n' "$host" "$path" >> manifest.jsonl
+          done
+          jq -s '{version: $v, revision: $r, hosts: .}' \
+            --arg v "$(cat VERSION)" --arg r "$(git rev-parse HEAD)" \
+            manifest.jsonl > manifest.json
+          rm manifest.jsonl
+
+      - name: Push and publish
+        if: steps.guard.outputs.release == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          V: ${{ steps.bump.outputs.version }}
+        run: |
+          git push origin HEAD:main
+          git push origin "v$V"
+          nix develop --command cz changelog --dry-run "v$V" > notes.md
+          gh release create "v$V" \
+            --title "v$V" \
+            --notes-file notes.md \
+            flake.lock manifest.json
