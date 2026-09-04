@@ -1,5 +1,8 @@
 {
-  den.aspects.ai.nixos = {
-    services.ollama.enable = true;
-  };
+  den.aspects.ai.nixos =
+    { pkgs, ... }:
+    {
+      services.ollama.enable = true;
+      services.ollama.package = pkgs.ollama-cuda;
+    };
 }

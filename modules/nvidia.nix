@@ -2,7 +2,7 @@
   den.aspects.nvidia.nixos =
     { config, ... }:
     {
-      nixpkgs.config.cudaSupport = true;
+      nixpkgs.config.cudaCapabilities = [ "12.0" ];
 
       services.xserver.videoDrivers = [ "nvidia" ];
 
