@@ -1,6 +1,6 @@
 { lib, ... }:
 {
-  den.aspects.oom-hardening.nixos = {
+  den.aspects.memory.nixos = {
     nix.settings = {
       max-jobs = 2;
       cores = 8;
