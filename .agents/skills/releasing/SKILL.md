@@ -55,9 +55,16 @@ Cutting 1.0 is a deliberate manual act: flip that flag and tag `v1.0.0`.
 3. The push to protected `main` failed — check the workflow log for a 403. `main` requires the
    release workflow's identity to have a bypass on required pull requests, or a PAT secret.
 
-**Release fired but the version is wrong.** `bump_map` in `.cz.toml` is *ordered* and first match
-wins, so the `"^.+!:"` MAJOR entry must precede `"^feat"`. If a breaking change only bumped
-MINOR, either that ordering broke or `major_version_zero` is still on (expected).
+**Release fired but the version is wrong.** Two traps in `.cz.toml`, both silent:
+
+1. `bump_map` keys are matched against **group(1) of `bump_pattern`**, not the whole commit
+   message. `bump_pattern` therefore wraps the type, scope and `!` in one outer group. Rewrite it
+   without that group and every breaking change quietly degrades to a MINOR bump.
+2. `bump_map` is *ordered* and first match wins, so the `"^.+!:"` MAJOR entry must precede
+   `"^feat"`.
+
+If a breaking change only bumped MINOR and both of those are intact, it's `major_version_zero`
+doing its job — expected until 1.0.
 
 **The changelog is missing entries.** `cz changelog --incremental` only regenerates from the last
 tag onward. If earlier sections are wrong, regenerate the whole file with

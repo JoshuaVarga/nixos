@@ -11,7 +11,11 @@ changelog_merge_prerelease = true
 schema = "<type>(<scope>)!: <subject>"
 schema_pattern = "^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\\((host|desktop|dev|ai|gaming|shell|sec|ci|docs|flake|release)\\))?!?: [a-z].{0,70}$"
 message_template = "{{change_type}}{% if scope %}({{scope}}){% endif %}{% if is_breaking %}!{% endif %}: {{subject}}"
-bump_pattern = "^(feat|fix|perf|refactor)(\\(.+\\))?!?:"
+commit_parser = "^(?P<change_type>build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(?:\\((?P<scope>[^()\\r\\n]*)\\))?(?P<breaking>!)?: (?P<message>.*)"
+changelog_pattern = "^(build|ci|docs|feat|fix|perf|refactor)(\\(.+\\))?!?:"
+# bump_map keys are matched against group(1) of bump_pattern, not the whole message, so
+# group(1) must span the `!` or breaking changes silently fall through to the type rules.
+bump_pattern = "^((?:feat|fix|perf|refactor)(?:\\(.+\\))?!?:)"
 bump_map = { "^.+!:" = "MAJOR", "^feat" = "MINOR", "^fix" = "PATCH", "^perf" = "PATCH", "^refactor" = "PATCH" }
 bump_map_major_version_zero = { "^.+!:" = "MINOR", "^feat" = "MINOR", "^fix" = "PATCH", "^perf" = "PATCH", "^refactor" = "PATCH" }
 change_type_order = [
