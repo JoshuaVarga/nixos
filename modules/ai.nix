@@ -31,7 +31,27 @@
         };
       };
 
-      systemd.tmpfiles.rules = [ "d ${ggufDir} 0750 ollama ollama -" ];
+      # ollama's module leaves modelsDir to the operator, and a ReadWritePaths
+      # entry that does not exist fails the unit's namespace setup. Creating
+      # these via tmpfiles would race a nofail mount and land them on the root
+      # filesystem instead, so gate on the mount here.
+      systemd.services.ollama-dirs = {
+        description = "Create the ollama model and GGUF directories";
+        requiredBy = [ "ollama.service" ];
+        before = [ "ollama.service" ];
+        unitConfig.RequiresMountsFor = [ modelsDir ];
+        serviceConfig = {
+          Type = "oneshot";
+          RemainAfterExit = true;
+        };
+        script = ''
+          for d in ${modelsDir} ${ggufDir}; do
+            mkdir -p "$d"
+            chown ollama:ollama "$d"
+            chmod 0750 "$d"
+          done
+        '';
+      };
 
       systemd.services.ollama-tuned-models = {
         description = "Build the tuned qwen38 model from its GGUF";
