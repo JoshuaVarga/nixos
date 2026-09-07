@@ -18,10 +18,7 @@ _: {
 
       services.gnome.gcr-ssh-agent.enable = false;
 
-      services.greetd = {
-        enable = true;
-        settings.default_session.command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --asterisks --cmd niri-session --theme 'border=blue;text=white;prompt=cyan;time=magenta;container=black;action=blue;button=blue;greet=magenta'";
-      };
+      services.displayManager.noctalia-greeter.enable = true;
 
       boot.kernelParams = [
         "vt.default_red=0x1a,0xf7,0x9e,0xe0,0x7a,0xbb,0x7d,0xa9,0x41,0xff,0xb9,0xff,0x7d,0xbb,0x0d,0xc0"
