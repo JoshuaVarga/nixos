@@ -2,9 +2,11 @@
   den.aspects.ai.nixos =
     { config, pkgs, ... }:
     let
-      ggufDir = "/mnt/games/ollama-gguf";
+      modelsDir = config.services.ollama.modelsDir;
+      ggufDir = "${dirOf modelsDir}/gguf";
       gguf = "${ggufDir}/Qwen3.8-27B-GSQ-RCO-IQ3_XXS.gguf";
       ggufUrl = "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF/resolve/main/Qwen3.8-27B-GSQ-RCO-IQ3_XXS.gguf";
+      ollamaHost = "${config.services.ollama.host}:${toString config.services.ollama.port}";
       modelfile = pkgs.writeText "qwen38.Modelfile" ''
         FROM ${gguf}
 
@@ -29,15 +31,15 @@
         };
       };
 
-      systemd.tmpfiles.rules = [ "d ${ggufDir} 0755 ollama ollama -" ];
+      systemd.tmpfiles.rules = [ "d ${ggufDir} 0750 ollama ollama -" ];
 
       systemd.services.ollama-tuned-models = {
         description = "Build the tuned qwen38 model from its GGUF";
         wantedBy = [ "multi-user.target" ];
         after = [ "ollama.service" ];
         bindsTo = [ "ollama.service" ];
-        unitConfig.RequiresMountsFor = [ ggufDir ];
-        environment.OLLAMA_HOST = "127.0.0.1:11434";
+        unitConfig.RequiresMountsFor = [ modelsDir ];
+        environment.OLLAMA_HOST = ollamaHost;
         path = [
           config.services.ollama.package
           pkgs.curl
