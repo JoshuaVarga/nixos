@@ -17,7 +17,8 @@ feature branch (rebased on develop) ──PR──> ci: flake check + commit lin
                                               │
                                               v
                           .github/workflows/weekly-release.yml
-        weekly (Mon 04:00 UTC, or dispatch): rebase develop onto main, push both
+     weekly (Mon 04:00 UTC, or dispatch): rebase develop onto main, push both,
+                          then `gh workflow run release.yml --ref main`
                                               │
                                               v
                                     .github/workflows/release.yml
@@ -33,6 +34,12 @@ feature branch (rebased on develop) ──PR──> ci: flake check + commit lin
 - Humans never push to `main` or `develop` directly. The weekly merge workflow pushes both
   (skipping entirely when `develop` has no commits ahead of `main`), and `release.yml`
   pushes `main` again with the `chore(release)` commit.
+- The weekly workflow *dispatches* `release.yml` rather than relying on its `push` trigger:
+  a push authenticated with the default `GITHUB_TOKEN` never raises workflow events, so the
+  `on: push` path alone would silently never fire.
+- The push to `develop` is `--force-with-lease`. The rebase rewrites every `develop`-only
+  commit, so a plain push would be rejected as non-fast-forward once `main` carries a
+  `chore(release)` commit that `develop` lacks.
 
 ## Preview commands (safe, read-only)
 
