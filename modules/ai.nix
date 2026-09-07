@@ -1,31 +1,47 @@
 {
   den.aspects.ai.nixos =
     { config, pkgs, ... }:
+    let
+      ggufDir = "/mnt/games/ollama-gguf";
+      gguf = "${ggufDir}/Qwen3.8-27B-GSQ-RCO-IQ3_XXS.gguf";
+      ggufUrl = "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF/resolve/main/Qwen3.8-27B-GSQ-RCO-IQ3_XXS.gguf";
+      modelfile = pkgs.writeText "qwen38.Modelfile" ''
+        FROM ${gguf}
+
+        PARAMETER num_ctx 65536
+        PARAMETER temperature 1.0
+        PARAMETER top_p 0.95
+        PARAMETER top_k 20
+        PARAMETER min_p 0.0
+        PARAMETER repeat_penalty 1.0
+      '';
+    in
     {
       services.ollama = {
         enable = true;
         package = pkgs.ollama-cuda;
         user = "ollama";
         group = "ollama";
-        loadModels = [ "hf.co/unsloth/Qwen3.8-27B-GGUF:UD-Q3_K_XL" ];
         environmentVariables = {
-          OLLAMA_CONTEXT_LENGTH = "32768";
+          OLLAMA_CONTEXT_LENGTH = "65536";
           OLLAMA_FLASH_ATTENTION = "1";
           OLLAMA_KV_CACHE_TYPE = "q8_0";
         };
       };
 
+      systemd.tmpfiles.rules = [ "d ${ggufDir} 0755 ollama ollama -" ];
+
       systemd.services.ollama-tuned-models = {
-        description = "Build tuned ollama models from checked-in Modelfiles";
+        description = "Build the tuned qwen38 model from its GGUF";
         wantedBy = [ "multi-user.target" ];
-        after = [
-          "ollama.service"
-          "ollama-model-loader.service"
-        ];
+        after = [ "ollama.service" ];
         bindsTo = [ "ollama.service" ];
-        environment = {
-          OLLAMA_HOST = "127.0.0.1:11434";
-        };
+        unitConfig.RequiresMountsFor = [ ggufDir ];
+        environment.OLLAMA_HOST = "127.0.0.1:11434";
+        path = [
+          config.services.ollama.package
+          pkgs.curl
+        ];
         serviceConfig = {
           Type = "oneshot";
           RemainAfterExit = true;
@@ -33,11 +49,15 @@
           Group = "ollama";
           TimeoutStartSec = "2h";
         };
-        path = [ config.services.ollama.package ];
+        # ollama's registry client fetches every blob as a ranged request, and
+        # hf.co serves this repo's 481-byte config blob in >30s that way, always
+        # tripping ollama's fixed 30s deadline. Fetch the GGUF directly instead.
         script = ''
-          base=hf.co/unsloth/Qwen3.8-27B-GGUF:UD-Q3_K_XL
-          until ollama show "$base" >/dev/null 2>&1; do sleep 15; done
-          ollama create qwen38 -f ${./qwen38.Modelfile}
+          if [ ! -s ${gguf} ]; then
+            curl -fL --retry 5 --retry-delay 5 -C - -o ${gguf}.part ${ggufUrl}
+            mv ${gguf}.part ${gguf}
+          fi
+          ollama create qwen38 -f ${modelfile}
         '';
       };
     };
