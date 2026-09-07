@@ -1,3 +1,18 @@
+## v0.2.1 (2026-09-07)
+
+### Bug Fixes
+
+- **ci**: dispatch release explicitly and force-push rebased develop
+
+### Documentation
+
+- explain the release dispatch and develop force-push
+- reword branching and release docs for develop branch
+
+### CI
+
+- add weekly develop-to-main release workflow
+
 ## v0.2.0 (2026-09-04)
 
 ### Features
