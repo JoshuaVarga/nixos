@@ -3,13 +3,14 @@ name: release
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
   release:
-    if: "!startsWith(github.event.head_commit.message, 'chore(release)')"
+    if: "github.event_name == 'workflow_dispatch' || !startsWith(github.event.head_commit.message, 'chore(release)')"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
