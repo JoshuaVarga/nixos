@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   merge:
@@ -35,6 +36,8 @@ jobs:
       - name: Rebase develop onto main
         if: steps.diff.outputs.skip != 'true'
         run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if ! git rebase origin/main; then
             echo "::error::Rebase conflict between develop and main. Aborting."
             git rebase --abort
@@ -44,5 +47,11 @@ jobs:
       - name: Push develop and main
         if: steps.diff.outputs.skip != 'true'
         run: |
-          git push origin HEAD:develop
+          git push --force-with-lease=develop origin HEAD:develop
           git push origin HEAD:main
+
+      - name: Trigger release
+        if: steps.diff.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run release.yml --ref main
