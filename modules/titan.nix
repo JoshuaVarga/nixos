@@ -68,11 +68,7 @@
           ];
         };
 
-        systemd.tmpfiles.rules = [
-          "d /mnt/games 0755 joshua users -"
-          "d /mnt/games/ollama 0750 ollama ollama -"
-          "d /mnt/games/ollama/models 0750 ollama ollama -"
-        ];
+        systemd.tmpfiles.rules = [ "d /mnt/games 0755 joshua users -" ];
 
         services.ollama.modelsDir = "/mnt/games/ollama/models";
         systemd.services.ollama.unitConfig.RequiresMountsFor = [ "/mnt/games" ];
