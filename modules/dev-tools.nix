@@ -9,6 +9,7 @@
         chezmoi
         wget
         claude-code
+        herdr
         gcc
         lazygit
         fzf
