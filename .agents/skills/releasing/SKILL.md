@@ -1,6 +1,6 @@
 ---
 name: releasing
-description: Understand and debug this repo's automated versioning, changelog, and GitHub Release pipeline. Use when asked what version the config is on, why a release did or did not fire, how to preview the next version or changelog, or how to undo a bad release. Releases are fully automated by commitizen on every merge to main; nobody cuts one by hand.
+description: Understand and debug this repo's automated versioning, changelog, and GitHub Release pipeline. Use when asked what version the config is on, why a release did or did not fire, how to preview the next version or changelog, or how to undo a bad release. Releases are fully automated on a weekly develop→main cycle; nobody cuts one by hand.
 ---
 
 # Releasing
@@ -11,9 +11,13 @@ by hand will be overwritten or will confuse the next bump.
 ## The pipeline
 
 ```
-feature branch (rebased on main) ──PR──> ci: flake check + commit lint
+feature branch (rebased on develop) ──PR──> ci: flake check + commit lint
                                               │
-                                 human "Rebase and merge"
+                                 human "Rebase and merge" into develop
+                                              │
+                                              v
+                          .github/workflows/weekly-release.yml
+        weekly (Mon 04:00 UTC, or dispatch): rebase develop onto main, push both
                                               │
                                               v
                                     .github/workflows/release.yml
@@ -26,7 +30,9 @@ feature branch (rebased on main) ──PR──> ci: flake check + commit lint
   reaches the built system. It must stay git-tracked or the flake cannot see it.
 - The workflow skips itself when the head commit already starts with `chore(release)`, so it
   cannot loop.
-- CI pushing to `main` is the *only* push to `main`; humans merge PRs and never push.
+- Humans never push to `main` or `develop` directly. The weekly merge workflow pushes both
+  (skipping entirely when `develop` has no commits ahead of `main`), and `release.yml`
+  pushes `main` again with the `chore(release)` commit.
 
 ## Preview commands (safe, read-only)
 
@@ -50,8 +56,10 @@ Cutting 1.0 is a deliberate manual act: flip that flag and tag `v1.0.0`.
 ## Debugging
 
 **No release fired after a merge.**
-1. Nothing matched `bump_pattern` — check the merged commits' types. Usually the answer.
-2. The head commit started with `chore(release)`, so the guard skipped the run.
+1. `develop` had no commits ahead of `main` that week — the weekly merge workflow skipped,
+   so `release.yml` never fired. Check `git rev-list --count origin/main..develop`; a
+   no-diff week means no tag.
+2. Nothing matched `bump_pattern` — check the merged commits' types. Usually the answer.
 3. The push to protected `main` failed — check the workflow log for a 403. `main` requires the
    release workflow's identity to have a bypass on required pull requests, or a PAT secret.
 

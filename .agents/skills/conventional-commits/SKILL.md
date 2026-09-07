@@ -1,6 +1,6 @@
 ---
 name: conventional-commits
-description: Write commits that pass this repo's commit-msg hook and land correctly in the changelog. Use before making any commit here, and whenever a commit is rejected by the hook or by the `commits` CI job. This repo enforces Conventional Commits (Angular types) with a fixed scope allowlist, subject line only — no body, no trailers — and rebase-merges every commit onto main, so each commit ships verbatim.
+description: Write commits that pass this repo's commit-msg hook and land correctly in the changelog. Use before making any commit here, and whenever a commit is rejected by the hook or by the `commits` CI job. This repo enforces Conventional Commits (Angular types) with a fixed scope allowlist, subject line only — no body, no trailers — and rebase-merges every commit onto develop, so each commit ships verbatim.
 ---
 
 # Conventional commits
@@ -94,19 +94,22 @@ Omit the scope rather than forcing a bad fit. To add a scope, extend the alterna
 2. Commit normally. `cz commit` gives an interactive prompt that can only produce a valid
    message, if you prefer it.
 
-3. Before opening a PR, and again whenever `main` moves, rebase onto `main`:
+3. Before opening a PR, and again whenever `develop` moves, rebase onto `develop`:
 
    ```
-   git fetch origin && git rebase origin/main
+   git fetch origin && git rebase origin/develop
    ```
 
 ## Gotchas
 
-- **Every commit ships.** PRs are *rebase*-merged, never squashed, so each commit lands on
-  `main` verbatim and gets its own changelog line. There is no squash to hide a sloppy
-  intermediate message behind — split work into atomic, individually meaningful commits.
-- **`main` moves after every release.** CI pushes a `chore(release)` commit once your PR merges,
-  so a local `main` goes stale immediately. Always `git fetch` before starting new work.
+- **Every commit ships.** PRs are *rebase*-merged into `develop`, never squashed, so each
+  commit lands on `develop` verbatim and gets its own changelog line. There is no squash
+  to hide a sloppy intermediate message behind — split work into atomic, individually
+  meaningful commits.
+- **`develop` moves with every merged PR; `main` only moves weekly.** The weekly merge
+  workflow rebases `develop` onto `main` and pushes both, so `main`'s history is a
+  subset of `develop`'s (plus the `chore(release)` commits). Always `git fetch` before
+  starting new work and rebase against `develop`.
 - **`!` is the only breaking-change signal.** There is no `BREAKING CHANGE:` footer here,
   because there are no footers.
 - **Never `--no-verify`.** The hook is the only thing standing between a bad message and a
