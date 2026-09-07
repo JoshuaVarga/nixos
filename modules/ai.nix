@@ -6,6 +6,8 @@
       ggufDir = "${dirOf modelsDir}/gguf";
       gguf = "${ggufDir}/Qwen3.8-27B-GSQ-RCO-IQ3_XXS.gguf";
       ggufUrl = "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF/resolve/main/Qwen3.8-27B-GSQ-RCO-IQ3_XXS.gguf";
+      ggufSha256 = "fdfcb6a29b11188956dfbfd904223588a6c1b77eb250c3e8a36e1bd269df91f7";
+      ggufSize = "10094357632";
       ollamaHost = "${config.services.ollama.host}:${toString config.services.ollama.port}";
       modelfile = pkgs.writeText "qwen38.Modelfile" ''
         FROM ${gguf}
@@ -56,7 +58,11 @@
       systemd.services.ollama-tuned-models = {
         description = "Build the tuned qwen38 model from its GGUF";
         wantedBy = [ "multi-user.target" ];
-        after = [ "ollama.service" ];
+        after = [
+          "ollama.service"
+          "network-online.target"
+        ];
+        wants = [ "network-online.target" ];
         bindsTo = [ "ollama.service" ];
         unitConfig.RequiresMountsFor = [ modelsDir ];
         environment.OLLAMA_HOST = ollamaHost;
@@ -69,16 +75,24 @@
           RemainAfterExit = true;
           User = "ollama";
           Group = "ollama";
+          Restart = "on-failure";
+          RestartSec = 60;
           TimeoutStartSec = "2h";
         };
         # ollama's registry client fetches every blob as a ranged request, and
         # hf.co serves this repo's 481-byte config blob in >30s that way, always
         # tripping ollama's fixed 30s deadline. Fetch the GGUF directly instead.
         script = ''
-          if [ ! -s ${gguf} ]; then
+          if [ "$(stat -c %s ${gguf} 2>/dev/null || echo 0)" != "${ggufSize}" ]; then
             curl -fL --retry 5 --retry-delay 5 -C - -o ${gguf}.part ${ggufUrl}
+            echo "${ggufSha256}  ${gguf}.part" | sha256sum -c --status
             mv ${gguf}.part ${gguf}
           fi
+
+          # ollama.service is Type=exec, so it is "started" before the HTTP
+          # listener accepts connections.
+          until curl -sf "http://${ollamaHost}/" >/dev/null; do sleep 2; done
+
           ollama create qwen38 -f ${modelfile}
         '';
       };
