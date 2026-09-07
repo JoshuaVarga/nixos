@@ -139,7 +139,7 @@ binds {
     Mod+Shift+E      { quit; }
     Mod+Shift+Q      { close-window; }
 
-    Mod+Space        { spawn "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
+    Mod+Space        { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
 
     Mod+1            { focus-workspace 1; }
     Mod+2            { focus-workspace 2; }
