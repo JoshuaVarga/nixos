@@ -1,6 +1,6 @@
 ---
 name: releasing
-description: Understand and debug this repo's automated versioning, changelog, and GitHub Release pipeline. Use when asked what version the config is on, why a release did or did not fire, how to preview the next version or changelog, or how to undo a bad release. Releases are fully automated on a weekly develop→main cycle; nobody cuts one by hand.
+description: Understand and debug this repo's automated versioning, changelog, and GitHub Release pipeline. Use when asked what version the config is on, why a release did or did not fire, how to preview the next version or changelog, or how to undo a bad release. Releases are fully automated on a weekly cadence off main; nobody cuts one by hand.
 ---
 
 # Releasing
@@ -11,35 +11,30 @@ by hand will be overwritten or will confuse the next bump.
 ## The pipeline
 
 ```
-feature branch (rebased on develop) ──PR──> ci: flake check + commit lint
-                                              │
-                                 human "Rebase and merge" into develop
-                                              │
-                                              v
-                          .github/workflows/weekly-release.yml
-     weekly (Mon 04:00 UTC, or dispatch): rebase develop onto main, push both,
-                          then `gh workflow run release.yml --ref main`
-                                              │
-                                              v
-                                    .github/workflows/release.yml
-        cz bump --files-only ─> cz changelog ─> commit "chore(release): vX.Y.Z" on main
-                             ─> tag vX.Y.Z ─> eval host closures ─> gh release create
+feature branch (rebased on main) ──PR──> ci: flake check + commit lint
+                                           │
+                              human "Rebase and merge" into main
+                                           │
+                                           v
+                              .github/workflows/release.yml
+        weekly (Mon 04:00 UTC, or workflow_dispatch), checked out on main:
+        cz bump --dry-run guard ─> cz bump --files-only ─> cz changelog
+        ─> commit "chore(release): vX.Y.Z" ─> tag vX.Y.Z ─> eval host closures
+        ─> push main + tag ─> gh release create
 ```
 
 - The version lives in the **git tag**; `.cz.toml` sets `version_provider = "scm"`.
 - `VERSION` is a tracked file written by the bump, read by `modules/version.nix` so the version
   reaches the built system. It must stay git-tracked or the flake cannot see it.
-- The workflow skips itself when the head commit already starts with `chore(release)`, so it
-  cannot loop.
-- Humans never push to `main` or `develop` directly. The weekly merge workflow pushes both
-  (skipping entirely when `develop` has no commits ahead of `main`), and `release.yml`
-  pushes `main` again with the `chore(release)` commit.
-- The weekly workflow *dispatches* `release.yml` rather than relying on its `push` trigger:
-  a push authenticated with the default `GITHUB_TOKEN` never raises workflow events, so the
-  `on: push` path alone would silently never fire.
-- The push to `develop` is `--force-with-lease`. The rebase rewrites every `develop`-only
-  commit, so a plain push would be rejected as non-fast-forward once `main` carries a
-  `chore(release)` commit that `develop` lacks.
+- The release job has **no push trigger**: only the weekly cron and `workflow_dispatch`. Merging a
+  PR therefore never cuts a release, and the workflow's own `chore(release)` commit cannot loop it.
+- A week with nothing releasable is a normal skip: the `Check for releasable commits` step fails
+  `cz bump --dry-run --yes`, sets `release=false`, and every later step is `if`-skipped. No tag,
+  no GitHub Release, no `chore(release)` commit.
+- Humans never push `main` directly — work arrives as rebase-merged PRs, and `release.yml` is the
+  only thing that pushes `main` (the `chore(release)` commit) and tags.
+- The push to `main` is a plain push. If a PR merges between the job's checkout and its push, the
+  push is rejected and the job fails; re-dispatch the workflow rather than adding retry logic.
 
 ## Preview commands (safe, read-only)
 
@@ -63,10 +58,10 @@ Cutting 1.0 is a deliberate manual act: flip that flag and tag `v1.0.0`.
 ## Debugging
 
 **No release fired after a merge.**
-1. `develop` had no commits ahead of `main` that week — the weekly merge workflow skipped,
-   so `release.yml` never fired. Check `git rev-list --count origin/main..develop`; a
-   no-diff week means no tag.
-2. Nothing matched `bump_pattern` — check the merged commits' types. Usually the answer.
+1. Merging does not release — the job only runs Monday 04:00 UTC or on dispatch. Wait, or dispatch
+   it manually.
+2. Nothing since the last tag matched `bump_pattern` — check
+   `git log "$(git describe --tags --abbrev=0)..origin/main" --oneline`. Usually the answer.
 3. The push to protected `main` failed — check the workflow log for a 403. `main` requires the
    release workflow's identity to have a bypass on required pull requests, or a PAT secret.
 
