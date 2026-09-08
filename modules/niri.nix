@@ -18,7 +18,14 @@ _: {
 
       services.gnome.gcr-ssh-agent.enable = false;
 
-      services.displayManager.noctalia-greeter.enable = true;
+      services.displayManager.noctalia-greeter = {
+        enable = true;
+        cursorTheme = {
+          package = pkgs.xcursor-pro;
+          name = "XCursor-Pro-Red";
+        };
+        settings.cursor.size = 24;
+      };
 
       boot.kernelParams = [
         "vt.default_red=0x1a,0xf7,0x9e,0xe0,0x7a,0xbb,0x7d,0xa9,0x41,0xff,0xb9,0xff,0x7d,0xbb,0x0d,0xc0"
