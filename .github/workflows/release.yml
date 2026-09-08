@@ -1,8 +1,8 @@
 name: release
 
 on:
-  push:
-    branches: [main]
+  schedule:
+    - cron: "0 4 * * 1"
   workflow_dispatch:
 
 permissions:
@@ -10,11 +10,11 @@ permissions:
 
 jobs:
   release:
-    if: "github.event_name == 'workflow_dispatch' || !startsWith(github.event.head_commit.message, 'chore(release)')"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: main
           fetch-depth: 0
           fetch-tags: true
 
