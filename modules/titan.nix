@@ -9,7 +9,6 @@
       den.aspects.nh
       den.aspects.nvidia
       den.aspects.gaming
-      den.aspects.ai
       den.aspects.memory
     ];
 
@@ -69,9 +68,6 @@
         };
 
         systemd.tmpfiles.rules = [ "d /mnt/games 0755 joshua users -" ];
-
-        services.ollama.modelsDir = "/mnt/games/ollama/models";
-        systemd.services.ollama.unitConfig.RequiresMountsFor = [ "/mnt/games" ];
       };
   };
 }
