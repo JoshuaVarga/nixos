@@ -32,7 +32,7 @@
 
         nix.settings = {
           max-jobs = 2;
-          cores = totalGiB / 8;
+          cores = totalGiB / 4;
         };
 
         systemd.services.nix-daemon.serviceConfig = {
