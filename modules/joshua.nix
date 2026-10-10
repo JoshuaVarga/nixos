@@ -1,4 +1,4 @@
-{ den, inputs, ... }:
+{ den, ... }:
 {
   den.aspects.joshua = {
     includes = [
@@ -10,14 +10,8 @@
     homeManager =
       { pkgs, ... }:
       {
-        imports = [ inputs.omp.homeManagerModules.default ];
-
-        programs.omp = {
-          enable = true;
-          settings.startup.quiet = true;
-        };
-
         home.packages = with pkgs; [
+          omp
           tree
         ];
       };
