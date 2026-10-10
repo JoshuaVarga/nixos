@@ -17,6 +17,7 @@
         pkgs.winetricks
         pkgs.wl-clipboard
         pkgs.xcursor-pro
+        pkgs.easyeffects
       ];
     };
 }
