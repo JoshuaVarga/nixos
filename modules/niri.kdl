@@ -221,5 +221,4 @@ binds {
     Mod+Print        { screenshot-window; }
 }
 
-include "./noctalia.kdl"
 
