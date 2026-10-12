@@ -1,3 +1,38 @@
+## v0.4.0 (2026-10-12)
+
+### Features
+
+- **ai**: remove ollama and its tuned model units
+- **desktop**: add easyeffects
+- **host**: flesh out the wsl host for day-to-day dev
+
+### Bug Fixes
+
+- **flake**: drop the unreachable cuda binary cache
+- **desktop**: drop the stale noctalia kdl include
+
+### Performance
+
+- **host**: raise nix build parallelism to all cores
+
+### Refactors
+
+- **host**: drop the cuda capability pin
+- **ai**: install omp from nixpkgs instead of its flake
+
+### Documentation
+
+- **host**: document wsl install and day-to-day use
+- drop the develop branch from the branching docs
+
+### Build
+
+- **flake**: pin noctalia to a known-good rev
+
+### CI
+
+- cut weekly releases directly from main
+
 ## v0.3.0 (2026-09-08)
 
 ### Features
